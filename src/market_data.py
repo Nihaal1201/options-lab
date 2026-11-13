@@ -22,15 +22,30 @@ def get_ticker(symbol):
 
 
 def get_spot(ticker):
-    """Latest stock price."""
-    return float(ticker.history(period="5d")["Close"].iloc[-1])
+    """
+    Latest stock price.
+    Tries Yahoo's live 'last price' first. If that's missing, uses the most
+    recent daily close, skipping empty rows (outside market hours Yahoo often
+    adds a blank row for today, which would otherwise give 'nan').
+    """
+    try:
+        price = float(ticker.fast_info["last_price"])
+        if np.isfinite(price) and price > 0:
+            return price
+    except Exception:
+        pass
+    closes = ticker.history(period="5d")["Close"].dropna()
+    if closes.empty:
+        raise ValueError("no recent price found for this ticker")
+    return float(closes.iloc[-1])
 
 
 def get_risk_free_rate(default=0.04):
     """13-week US Treasury bill yield (Yahoo symbol ^IRX), as a decimal."""
     try:
-        irx = get_ticker("^IRX").history(period="5d")["Close"].iloc[-1]
-        return float(irx) / 100
+        irx = get_ticker("^IRX").history(period="5d")["Close"].dropna().iloc[-1]
+        rate = float(irx) / 100
+        return rate if np.isfinite(rate) else default
     except Exception:
         return default
 

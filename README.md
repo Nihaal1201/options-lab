@@ -71,6 +71,12 @@ Module 6 also writes an interactive 3D chart to `images/module6_surface_SPY.html
 - Yahoo Finance data can be delayed. Outside market hours, the code falls back to last-traded prices, which can be stale.
 - The surface is linearly interpolated between market quotes. No smoothing or arbitrage-free fitting model (such as SVI) is applied yet.
 
-## Next
+## Interactive dashboard
 
-- An interactive web dashboard (Streamlit): enter any US ticker and see its smile, surface and Greeks.
+`app.py` is a Streamlit web app. Enter any US ticker to see its live volatility surface, smile and term structure, or price any option three ways with its Greeks.
+
+```bash
+python -m streamlit run app.py
+```
+
+If Yahoo Finance can't be reached, the dashboard falls back to the latest snapshot saved in `data/`.
