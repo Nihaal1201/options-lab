@@ -1,0 +1,10 @@
+# Your private Python environment (huge, and specific to your Mac)
+.venv/
+
+# Python's automatic cache files
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Mac system files
+.DS_Store
